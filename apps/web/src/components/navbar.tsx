@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import { Shield, Upload, Home, Users, Activity, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useWallet } from "@/hooks/usewallet";
 
 const navItems = [
   { name: "Home", href: "/home", icon: Home },
@@ -19,6 +20,14 @@ const navItems = [
 export function Navbar() {
   const pathname = usePathname();
   const [hoveredPath, setHoveredPath] = useState(pathname);
+
+  const { address } = useWallet();
+
+  if(!address){
+    console.log("address is ", address)
+    redirect("/signin")
+  }
+
 
   return (
     <header className="sticky px-8 py-2 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -92,13 +101,19 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center justify-end space-x-2">
-            <Avatar className="h-8 w-8">
+           <div className="flex flex-col justify-center items-center">
+           <Avatar className="h-8 w-8">
               <AvatarImage
-                src="/placeholder.svg?height=32&width=32"
+                src={`${address ? "A" : "D"}`}
                 alt="User"
               />
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
+            <div>
+              {address ?? address}
+            </div>
+           </div>
+
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">

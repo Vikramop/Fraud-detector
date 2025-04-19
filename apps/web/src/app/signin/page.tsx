@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useWallet } from "@/hooks/usewallet"
 
 export default function SignInPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const { address, connectWallet } = useWallet()
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,14 +28,14 @@ export default function SignInPage() {
     }, 1500)
   }
 
-  const handleConnectWallet = () => {
+  const handleConnectWallet = async() => {
     setIsLoading(true)
+    await connectWallet()
 
-    // Simulate wallet connection
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push("/home")
-    }, 1500)
+    setIsLoading(false)
+
+    console.log(address)
+    router.push("/home")
   }
 
   return (

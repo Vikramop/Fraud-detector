@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useMotionValue, useSpring, useTransform } from "motion/react"
 
-// Custom hook for cursor effects
 export function useCursorEffect() {
   const cursorX = useMotionValue(0)
   const cursorY = useMotionValue(0)
@@ -28,7 +27,6 @@ export function useCursorEffect() {
   return { cursorXSpring, cursorYSpring }
 }
 
-// Custom hook for scroll-triggered animations
 export function useScrollAnimation() {
   const [scrollY, setScrollY] = useState(0)
 
