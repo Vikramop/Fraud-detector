@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import { motion } from "motion/react";
@@ -8,6 +8,7 @@ import { Shield, Upload, Home, Users, Activity, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SiEthereum } from "react-icons/si"
 import { useWallet } from "@/hooks/usewallet";
 
 const navItems = [
@@ -22,11 +23,21 @@ export function Navbar() {
   const [hoveredPath, setHoveredPath] = useState(pathname);
 
   const { address } = useWallet();
-
+  console.log("address is ", address)
   if(!address){
     console.log("address is ", address)
     redirect("/signin")
   }
+
+
+  const formatedAddress = useMemo(() => {
+      let newAddress = address.slice(0,4);
+
+      newAddress += address.slice(address.length - 4 , address.length)
+      newAddress += "..."
+      console.log(newAddress)
+      return newAddress
+  }, [address])
 
 
   return (
@@ -51,7 +62,7 @@ export function Navbar() {
             </motion.span>
           </Link>
           <nav className="hidden md:flex items-center space-x-20 text-sm font-medium">
-            {navItems.map((item, index) => {
+            {navItems.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
@@ -69,7 +80,7 @@ export function Navbar() {
                   initial={{scale : 0.8, opacity : 0}}
                   animate={{scale : 1, opacity : 1}}
                   transition={{duration : 0.3}}
-                  className="flex items-center">
+                  className="flex items-center justiy-center gap-1">
                     <Icon className="mr-1 h-4 w-4" />
                     <span>{item.name}</span>
                   </motion.span>
@@ -102,15 +113,15 @@ export function Navbar() {
 
           <div className="flex items-center justify-end space-x-2">
            <div className="flex flex-col justify-center items-center">
-           <Avatar className="h-8 w-8">
+           {!address ? <Avatar className="h-8 w-8">
               <AvatarImage
-                src={`${address ? "A" : "D"}`}
+                src={`Name`}
                 alt="User"
-              />
+              /> 
               <AvatarFallback>U</AvatarFallback>
-            </Avatar>
+            </Avatar> : <SiEthereum />}
             <div>
-              {address ?? address}
+              {address && formatedAddress}
             </div>
            </div>
 

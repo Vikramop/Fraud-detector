@@ -4,14 +4,14 @@ import { useState, useEffect, useCallback, useContext } from "react";
 import { BrowserProvider, ethers } from "ethers";
 import { MyAppContext } from "@/state/store";
 
-type WalletState = {
-  address: string | null;
-  provider : undefined | BrowserProvider,
-  signer : ethers.JsonRpcSigner | null
-  isConnected: boolean;
-  isConnecting: boolean;
-  error: string | null;
-};
+// type WalletState = {
+//   address: string | null;
+//   provider : undefined | BrowserProvider,
+//   signer : ethers.JsonRpcSigner | null
+//   isConnected: boolean;
+//   isConnecting: boolean;
+//   error: string | null;
+// };
 
 
 function useMyAppContext(){
@@ -96,6 +96,8 @@ export function useWallet() {
               isConnecting: false,
               error: null,
             });
+
+            localStorage.setItem("address", account)
     } catch (error) {
       setWalletState({
         address: null,
