@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "motion/react"
 import { Upload, FileCode, AlertTriangle, CheckCircle } from "lucide-react"
@@ -14,18 +14,39 @@ export default function UploadPage() {
   const router = useRouter()
   const [isUploading, setIsUploading] = useState(false)
   const [contractCode, setContractCode] = useState("")
+
+  const [file, setFile] = useState<File>()
   const [activeTab, setActiveTab] = useState("upload")
 
-  const handleUpload = () => {
-    if (!contractCode.trim()) return
+  const inputFile = useRef(null)
 
-    setIsUploading(true)
+  const handleUpload = async() => {
+    if (!contractCode.trim()) return;
 
-    // Simulate processing
-    setTimeout(() => {
-      setIsUploading(false)
-      router.push("/summary")
-    }, 2000)
+    setIsUploading(true);
+  
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: contractCode }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Navigate to a summary page or display the result
+        // For example, you can set the result in state and display it
+        console.log('Analysis Result:', data.result);
+        router.push('/summary'); // If you have a summary page
+      } else {
+        console.error('Analysis Error:', data.error);
+      }
+    } catch (error) {
+      console.error('Request Error:', error);
+    } finally {
+      setIsUploading(false);
+    }
   }
 
   const container = {
@@ -84,7 +105,37 @@ export default function UploadPage() {
                           onChange={(e) => setContractCode(e.target.value)}
                         />
                         <div className="flex flex-col sm:flex-row gap-4">
-                          <Button variant="outline" className="flex-1">
+                        <input type='file' id='file' ref={inputFile} style={{display: 'none'}} onChange={async(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                          //@ts-ignore
+                          const file = e.target.files[0];
+                          setFile(file)
+                          
+                          const response = await fetch('/api/analyze', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ code: file }),
+                          });
+
+                          const data = await response.json();
+  
+                          if (response.ok) {
+                            console.log('Analysis Result:', data.result);
+                            router.push('/summary'); 
+                          } else {
+                            console.error('Analysis Error:', data.error);
+                          }
+
+
+
+                        }}/>
+                          <Button variant="outline" className="flex-1" onClick={() => {
+                            if(inputFile.current){
+                              //@ts-ignore
+                              inputFile.current.click()
+                            }
+                          }}>
                             <FileCode className="mr-2 h-4 w-4" />
                             Browse Files
                           </Button>
