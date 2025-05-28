@@ -1,21 +1,23 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
-import { ThemeProvider } from "next-themes"
-import { MyAppContextProvider } from "@/state/store";
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+import './globals.css';
+import { ThemeProvider } from 'next-themes';
+import { MyAppContextProvider } from '@/state/store';
+import { Providers } from './providers';
+import '@rainbow-me/rainbowkit/styles.css';
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
+  src: './fonts/GeistVF.woff',
+  variable: '--font-geist-sans',
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
+  src: './fonts/GeistMonoVF.woff',
+  variable: '--font-geist-mono',
 });
 
 export const metadata: Metadata = {
-  title: "Fraud Detection",
-  description: "Application for fraud detection",
+  title: 'Fraud Detection',
+  description: 'Application for fraud detection',
 };
 
 export default function RootLayout({
@@ -26,11 +28,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-        <MyAppContextProvider>
-        {children}
-        </MyAppContextProvider>
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <MyAppContextProvider>{children}</MyAppContextProvider>
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
